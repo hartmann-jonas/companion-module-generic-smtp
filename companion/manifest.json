@@ -1,0 +1,26 @@
+{
+	"id": "generic-smtp",
+	"name": "generic-smtp",
+	"shortname": "generic-smtp",
+	"description": "Generic SMTP",
+	"version": "0.0.1",
+	"license": "MIT",
+	"repository": "git+https://github.com/bitfocus/companion-module-generic-smtp.git",
+	"bugs": "https://github.com/bitfocus/companion-module-generic-smtp/issues",
+	"maintainers": [
+		{
+			"name": "Jonas Hartmann",
+			"email": "git.jonashartmann@proton.me"
+		}
+	],
+	"legacyIds": [],
+	"runtime": {
+		"type": "node18",
+		"api": "nodejs-ipc",
+		"apiVersion": "0.0.0",
+		"entrypoint": "../dist/index.js"
+	},
+	"manufacturer": "Generic",
+	"products": ["SMTP"],
+	"keywords": ["Generic"]
+}
