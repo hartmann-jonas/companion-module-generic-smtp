@@ -1,15 +1,14 @@
 import { InstanceBase, InstanceStatus, runEntrypoint, SomeCompanionConfigField } from '@companion-module/base'
-import { UpdateActions } from './actions'
+import { UpdateActions, Mail } from './actions'
 import { DeviceConfig, GetConfigFields } from './config'
 import { UpgradeScripts } from './upgrades'
 import { UpdateVariableDefinitions } from './variables'
+import { UpdateFeedbacks } from './feedback'
 //import { GetFeedbacksList } from './feedback'
 
-import nodemailer from 'nodemailer'
-import { UpdateFeedbacks } from './feedback'
 
-class ControllerInstance extends InstanceBase<DeviceConfig> {
-	private config: DeviceConfig
+class SMTPInstance extends InstanceBase<DeviceConfig> {
+	config: DeviceConfig
 
 	constructor(internal: unknown) {
 		super(internal)
@@ -22,7 +21,6 @@ class ControllerInstance extends InstanceBase<DeviceConfig> {
 	 */
 	public async init(config: DeviceConfig): Promise<void> {
 		this.updateStatus(InstanceStatus.Connecting)
-		console.log("Init")
 		this.config = config
 
 		this.updateStatus(InstanceStatus.Ok)
@@ -36,8 +34,7 @@ class ControllerInstance extends InstanceBase<DeviceConfig> {
 	/**
 	 * Process an updated configuration array.
 	 */
-	async configUpdated(config) {
-		console.log("Config updated")
+	async configUpdated(config: DeviceConfig) {
 		this.config = config
 	}
 
@@ -45,7 +42,6 @@ class ControllerInstance extends InstanceBase<DeviceConfig> {
 	 * Creates the configuration fields for web config.
 	 */
 	public getConfigFields(): SomeCompanionConfigField[] {
-		console.log("Get config fields")
 		return GetConfigFields()
 	}
 
@@ -67,10 +63,8 @@ class ControllerInstance extends InstanceBase<DeviceConfig> {
 	updateVariableDefinitions() {
 		UpdateVariableDefinitions(this)
 	}
-
-	public async sendMail(mail) {
-		// send the mail
-	}
 }
 
-runEntrypoint(ControllerInstance, UpgradeScripts)
+export = SMTPInstance
+
+runEntrypoint(SMTPInstance, UpgradeScripts)

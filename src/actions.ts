@@ -1,26 +1,29 @@
-import {
-	CompanionActionDefinitions,
-	InstanceBase,
-} from '@companion-module/base'
+import { InstanceBase } from '@companion-module/base'
 import { DeviceConfig } from './config'
+import { type } from 'os'
 
-export function UpdateActions(self: InstanceBase<DeviceConfig>): CompanionActionDefinitions {
-	console.log("The actions are not working")
-	const actions = {
-		['sendmail']: {
+export interface Mail {
+	recipient: string
+	bcc: string
+	subject: string
+	message: string
+}
+
+export function UpdateActions(self: InstanceBase<DeviceConfig>) {
+	self.setActionDefinitions({
+		sendMail: {
 			name: 'Send email',
-			description: 'Send an email to a recipient',
+			description: 'Seperate multiple recipients with commas.',
 			options: [
-				/* {
-					id: 'val',
-					type: 'textinput',
-					label: 'Provide name',
-					'default': 'Bob'
-				}
 				{
 					type: 'textinput',
-					id: 'reciever',
-					label: 'Reciever',
+					id: 'recipient',
+					label: 'Recipient',
+				},
+				{
+					type: 'textinput',
+					id: 'bcc',
+					label: 'Bcc',
 				},
 				{
 					type: 'textinput',
@@ -31,15 +34,17 @@ export function UpdateActions(self: InstanceBase<DeviceConfig>): CompanionAction
 					type: 'textinput',
 					id: 'message',
 					label: 'Message',
-				} */
+				},
 			],
-			callback: (event): void => {
-				event = event.options
-				console.log(event)
-				//self.sendMail(event)
-			}
+			callback: async (event): Promise<void> => {
+				const mailContent = event.options
+				mailContent.recipient = mailContent.recipient.split(',')
+				if (mailContent.message: Z) {
+					mailContent.message = await self.parseVariablesInString(mailContent.message)
+				}
+				console.log(mailContent)
+				self.sendEmail(mailContent).catch((e) => self.log('error', `an error occured when sending the email: ${e}`))
+			},
 		},
-	}
-
-	return actions
+	})
 }
