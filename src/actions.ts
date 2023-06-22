@@ -1,6 +1,5 @@
 import { InstanceBase } from '@companion-module/base'
 import { DeviceConfig } from './config'
-import { type } from 'os'
 
 export interface Mail {
 	recipient: string
@@ -21,10 +20,18 @@ export function UpdateActions(self: InstanceBase<DeviceConfig>) {
 					label: 'Recipient',
 				},
 				{
+					type: 'checkbox',
+					id: 'bccCheck',
+					label: 'BCC',
+					default: true,
+				},
+				/* {
 					type: 'textinput',
 					id: 'bcc',
-					label: 'Bcc',
-				},
+					label: 'Bcc Recipient',
+					isVisible: (options) => options.bccCheck = true,
+					width: 10,
+				}, */
 				{
 					type: 'textinput',
 					id: 'subject',
@@ -38,12 +45,17 @@ export function UpdateActions(self: InstanceBase<DeviceConfig>) {
 			],
 			callback: async (event): Promise<void> => {
 				const mailContent = event.options
-				mailContent.recipient = mailContent.recipient.split(',')
-				if (mailContent.message: Z) {
+				if (typeof mailContent.message === 'string' && typeof mailContent.recipient === 'string') {
 					mailContent.message = await self.parseVariablesInString(mailContent.message)
+						mailContent.recipient = mailContent.recipient.split(',')
+						if (mailContent.bccCheck = true && typeof mailContent.bcc === 'string') {
+							mailContent.bcc = mailContent.bcc.split(',')
+						} else {
+							delete mailContent.bcc
+						}
+						console.log(mailContent)
+						self.sendEmail(mailContent).catch((e) => self.log('error', `an error occured when sending the email: ${e}`))
 				}
-				console.log(mailContent)
-				self.sendEmail(mailContent).catch((e) => self.log('error', `an error occured when sending the email: ${e}`))
 			},
 		},
 	})

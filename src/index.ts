@@ -6,9 +6,10 @@ import { UpdateVariableDefinitions } from './variables'
 import { UpdateFeedbacks } from './feedback'
 //import { GetFeedbacksList } from './feedback'
 
+import nodemailer from 'nodemailer'
 
 class SMTPInstance extends InstanceBase<DeviceConfig> {
-	config: DeviceConfig
+	private config: DeviceConfig
 
 	constructor(internal: unknown) {
 		super(internal)
@@ -63,8 +64,28 @@ class SMTPInstance extends InstanceBase<DeviceConfig> {
 	updateVariableDefinitions() {
 		UpdateVariableDefinitions(this)
 	}
-}
 
-export = SMTPInstance
+	public async sendEmail(mail: Mail) {
+		const transporter = nodemailer.createTransport({
+			host: String(this.config.host),
+			port: Number(this.config.port),
+			secure: Boolean(this.config.secure),
+			auth: {
+				user: String(this.config.user),
+				pass: String(this.config.password),
+			},
+		})
+
+		const info = await transporter.sendMail({
+			from: `${this.config.name} <${this.config.user}>`,
+			to: mail.recipient,
+			bcc: mail.bcc,
+			subject: mail.subject,
+			text: mail.message,
+		})
+
+		console.log('Message sent: ' + info.messageId)
+	}
+}
 
 runEntrypoint(SMTPInstance, UpgradeScripts)
