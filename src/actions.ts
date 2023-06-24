@@ -18,29 +18,24 @@ export function UpdateActions(self: InstanceBase<DeviceConfig>) {
 					type: 'textinput',
 					id: 'recipient',
 					label: 'Recipient',
+					required: true,
 				},
 				{
-					type: 'checkbox',
-					id: 'bccCheck',
-					label: 'BCC',
-					default: true,
-				},
-				/* {
 					type: 'textinput',
 					id: 'bcc',
 					label: 'Bcc Recipient',
-					isVisible: (options) => options.bccCheck = true,
-					width: 10,
-				}, */
+				},
 				{
 					type: 'textinput',
 					id: 'subject',
 					label: 'Subject',
+					required: true,
 				},
 				{
 					type: 'textinput',
 					id: 'message',
 					label: 'Message',
+					required: true,
 				},
 			],
 			callback: async (event): Promise<void> => {
@@ -48,13 +43,14 @@ export function UpdateActions(self: InstanceBase<DeviceConfig>) {
 				if (typeof mailContent.message === 'string' && typeof mailContent.recipient === 'string') {
 					mailContent.message = await self.parseVariablesInString(mailContent.message)
 						mailContent.recipient = mailContent.recipient.split(',')
-						if (mailContent.bccCheck = true && typeof mailContent.bcc === 'string') {
+						if (typeof mailContent.bcc === 'string' && mailContent.bcc) {
+							console.log(mailContent.bcc)
 							mailContent.bcc = mailContent.bcc.split(',')
 						} else {
 							delete mailContent.bcc
 						}
 						console.log(mailContent)
-						self.sendEmail(mailContent).catch((e) => self.log('error', `an error occured when sending the email: ${e}`))
+						self.sendEmail(mailContent).catch((e: string) => self.log('error', `an error occured while sending the email: ${e}`))
 				}
 			},
 		},

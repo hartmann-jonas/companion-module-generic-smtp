@@ -76,13 +76,20 @@ class SMTPInstance extends InstanceBase<DeviceConfig> {
 			},
 		})
 
-		const info = await transporter.sendMail({
+		let mailDescription = {
 			from: `${this.config.name} <${this.config.user}>`,
 			to: mail.recipient,
-			bcc: mail.bcc,
 			subject: mail.subject,
 			text: mail.message,
-		})
+		}
+
+		// if we have someone in bcc add bcc to the mailDescription
+		if (mail.bcc) {
+			console.log("mail with bcc")
+			mailDescription.bcc = mail.bcc
+		}
+
+		const info = await transporter.sendMail(mailDescription)
 
 		console.log('Message sent: ' + info.messageId)
 	}
