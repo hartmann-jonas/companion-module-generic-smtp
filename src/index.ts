@@ -85,7 +85,6 @@ class SMTPInstance extends InstanceBase<DeviceConfig> {
 
 		// if we have someone in bcc add bcc to the mailDescription
 		if (mail.bcc) {
-			console.log("mail with bcc")
 			mailDescription.bcc = mail.bcc
 		}
 

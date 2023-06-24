@@ -44,12 +44,10 @@ export function UpdateActions(self: InstanceBase<DeviceConfig>) {
 					mailContent.message = await self.parseVariablesInString(mailContent.message)
 						mailContent.recipient = mailContent.recipient.split(',')
 						if (typeof mailContent.bcc === 'string' && mailContent.bcc) {
-							console.log(mailContent.bcc)
 							mailContent.bcc = mailContent.bcc.split(',')
 						} else {
 							delete mailContent.bcc
 						}
-						console.log(mailContent)
 						self.sendEmail(mailContent).catch((e: string) => self.log('error', `an error occured while sending the email: ${e}`))
 				}
 			},
