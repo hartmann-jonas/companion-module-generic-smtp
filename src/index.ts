@@ -3,10 +3,8 @@ import { UpdateActions, Mail } from './actions'
 import { DeviceConfig, GetConfigFields } from './config'
 import { UpgradeScripts } from './upgrades'
 import { UpdateVariableDefinitions } from './variables'
-import { UpdateFeedbacks } from './feedback'
-//import { GetFeedbacksList } from './feedback'
 
-import nodemailer from 'nodemailer'
+import nodemailer, { SendMailOptions } from 'nodemailer'
 
 class SMTPInstance extends InstanceBase<DeviceConfig> {
 	private config: DeviceConfig
@@ -26,9 +24,7 @@ class SMTPInstance extends InstanceBase<DeviceConfig> {
 
 		this.updateStatus(InstanceStatus.Ok)
 
-		// TODO: Implement new feedbacks, variables, presets
 		this.updateActions()
-		this.updateFeedbacks()
 		this.updateVariableDefinitions()
 	}
 
@@ -57,10 +53,6 @@ class SMTPInstance extends InstanceBase<DeviceConfig> {
 		UpdateActions(this)
 	}
 
-	updateFeedbacks() {
-		UpdateFeedbacks(this)
-	}
-
 	updateVariableDefinitions() {
 		UpdateVariableDefinitions(this)
 	}
@@ -76,21 +68,23 @@ class SMTPInstance extends InstanceBase<DeviceConfig> {
 			},
 		})
 
-		let mailDescription = {
+		let mailDescription: SendMailOptions = {
 			from: `${this.config.name} <${this.config.user}>`,
 			to: mail.recipient,
 			subject: mail.subject,
-			text: mail.message,
+			html: mail.message,
 		}
 
-		// if we have someone in bcc add bcc to the mailDescription
 		if (mail.bcc) {
 			mailDescription.bcc = mail.bcc
 		}
 
-		const info = await transporter.sendMail(mailDescription)
+		if (mail.replyTo) {
+			mailDescription.replyTo = mail.replyTo
+		}
 
-		console.log('Message sent: ' + info.messageId)
+		const info = await transporter.sendMail(mailDescription)
+		this.log('debug', `email send successfully: ${info.response}`)
 	}
 }
 

@@ -2,7 +2,7 @@ import { SomeCompanionConfigField } from '@companion-module/base'
 
 export interface DeviceConfig {
 	host: string
-	port: string
+	port: number
 	secure: boolean
 	name: string
 	user: string
@@ -24,7 +24,7 @@ export function GetConfigFields(): SomeCompanionConfigField[] {
 			default: 465,
 			min: 1,
 			max: 65535,
-			width: 11,
+			width: 10,
 		},
 		{
 			type: 'checkbox',
