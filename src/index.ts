@@ -75,6 +75,10 @@ class SMTPInstance extends InstanceBase<DeviceConfig> {
 			html: mail.message,
 		}
 
+		if (mail.cc) {
+			mailDescription.cc = mail.cc
+		}
+
 		if (mail.bcc) {
 			mailDescription.bcc = mail.bcc
 		}

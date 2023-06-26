@@ -2,11 +2,12 @@ import { InstanceBase } from '@companion-module/base'
 import { DeviceConfig } from './config'
 
 export interface Mail {
-	recipient: string
-	bcc: string
+	recipient?: string
+	cc?: string
+	bcc?: string
 	subject: string
 	message: string
-	replyTo: string
+	replyTo?: string
 }
 
 export function UpdateActions(self: InstanceBase<DeviceConfig>) {
@@ -50,13 +51,14 @@ export function UpdateActions(self: InstanceBase<DeviceConfig>) {
 			],
 			callback: async (event): Promise<void> => {
 				const mailContent = event.options
-				console.log(mailContent)
 
 				mailContent.subject = await self.parseVariablesInString(mailContent.subject)
 				mailContent.message = await self.parseVariablesInString(mailContent.message)
 
 				if (mailContent.recipient) {
 					mailContent.recipient = mailContent.recipient.split(',')
+				} else {
+					delete mailContent.recipient
 				}
 
 				if (mailContent.cc) {
@@ -78,7 +80,6 @@ export function UpdateActions(self: InstanceBase<DeviceConfig>) {
 				} else {
 					delete mailContent.replyTo
 				}
-				console.log(mailContent)
 				self
 					.sendEmail(mailContent)
 					.catch((e: string) => self.log('error', `an error occured while sending the email: ${e}`))
