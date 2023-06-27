@@ -8,6 +8,7 @@ import nodemailer, { SendMailOptions } from 'nodemailer'
 
 class SMTPInstance extends InstanceBase<DeviceConfig> {
 	private config: DeviceConfig
+	private status
 
 	constructor(internal: unknown) {
 		super(internal)
@@ -23,6 +24,7 @@ class SMTPInstance extends InstanceBase<DeviceConfig> {
 		this.config = config
 
 		this.updateStatus(InstanceStatus.Ok)
+		this.status = InstanceStatus.Ok
 
 		this.updateActions()
 		this.updateVariableDefinitions()
@@ -88,6 +90,7 @@ class SMTPInstance extends InstanceBase<DeviceConfig> {
 		}
 
 		const info = await transporter.sendMail(mailDescription)
+		console.log(info)
 		this.log('debug', `email send successfully: ${info.response}`)
 	}
 }

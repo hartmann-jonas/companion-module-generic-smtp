@@ -1,4 +1,4 @@
-import { InstanceBase } from '@companion-module/base'
+import { InstanceBase, InstanceStatus } from '@companion-module/base'
 import { DeviceConfig } from './config'
 
 export interface Mail {
@@ -80,9 +80,14 @@ export function UpdateActions(self: InstanceBase<DeviceConfig>) {
 				} else {
 					delete mailContent.replyTo
 				}
-				self
-					.sendEmail(mailContent)
-					.catch((e: string) => self.log('error', `an error occured while sending the email: ${e}`))
+				if (self.status != InstanceStatus.Ok) {
+					self.updateStatus(InstanceStatus.Ok)
+				}
+				self.sendEmail(mailContent)
+				.catch((e: string) => {
+					self.log('error', `an error occured while sending the email: ${e}`)
+					self.updateStatus(InstanceStatus.ConnectionFailure)
+				})
 			},
 		},
 	})
