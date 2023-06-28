@@ -8,11 +8,12 @@ import nodemailer, { SendMailOptions } from 'nodemailer'
 
 class SMTPInstance extends InstanceBase<DeviceConfig> {
 	private config: DeviceConfig
-	private status
+	private status: string
 
 	constructor(internal: unknown) {
 		super(internal)
 		this.config = {}
+		this.status = ""
 	}
 
 	/**
